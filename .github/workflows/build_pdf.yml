@@ -1,0 +1,39 @@
+name: Build Book PDF
+
+on:
+  push:
+    # Tag push starting with v triggers PDF build and release
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Pandoc and LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex fonts-noto-cjk
+      - name: Combine Markdown files
+        run: |
+          mkdir -p build
+          ls chapters/*.md | sort | xargs cat > build/book.md
+      - name: Convert to PDF
+        run: |
+          pandoc build/book.md -o build/book.pdf \
+            --pdf-engine=xelatex \
+            --toc \
+            -V CJKmainfont=NotoSansCJKjp-Regular
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: book-pdf
+          path: build/book.pdf
+      - name: Create Release and attach PDF
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/book.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
