@@ -31,6 +31,8 @@ jobs:
         run: |
           docker run --rm texlive-pandoc pandoc --version
           docker run --rm texlive-pandoc lualatex --version
+          echo "Available Japanese fonts:"
+          docker run --rm texlive-pandoc fc-list | grep -E "(Noto|Takao|VL|Gothic|Mincho)" | head -10
           
       - name: Combine Markdown files
         run: |

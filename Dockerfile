@@ -17,8 +17,19 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     && rm -rf /var/lib/apt/lists/*
 
+# 日本語フォントのインストール
+RUN apt-get update && apt-get install -y \
+    fonts-noto-cjk \
+    fonts-noto-cjk-extra \
+    fonts-takao \
+    fonts-vlgothic \
+    && rm -rf /var/lib/apt/lists/*
+
 # フォントキャッシュの更新
 RUN fc-cache -fv
+
+# 利用可能な日本語フォントを確認
+RUN fc-list | grep -E "(Noto|Takao|VL)" | head -10
 
 # 作業ディレクトリの設定
 WORKDIR /workspace
