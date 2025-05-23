@@ -23,8 +23,15 @@ jobs:
       - name: Install Pandoc and LaTeX
         run: |
           sudo apt-get update
-          # 基本的なPandocとLaTeX環境
-          sudo apt-get install -y pandoc texlive-xetex texlive-lang-japanese
+          
+          # 最新のPandocをインストール
+          PANDOC_VERSION=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+          wget https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz
+          tar xzf pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz
+          sudo cp pandoc-${PANDOC_VERSION}/bin/pandoc /usr/local/bin/
+          
+          # 基本的なLaTeX環境
+          sudo apt-get install -y texlive-xetex texlive-lang-japanese
           
           # 技術書に必要な追加LaTeXパッケージ
           sudo apt-get install -y \
@@ -56,7 +63,7 @@ jobs:
           
       - name: Convert to PDF
         run: |
-          pandoc build/book.md --defaults pandoc/latex.yaml -o build/book.pdf
+          pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
