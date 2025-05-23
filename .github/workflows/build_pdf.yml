@@ -19,22 +19,51 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Install Pandoc and LaTeX
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc texlive-xetex texlive-lang-japanese fonts-noto-cjk
+          # 基本的なPandocとLaTeX環境
+          sudo apt-get install -y pandoc texlive-xetex texlive-lang-japanese
+          
+          # 技術書に必要な追加LaTeXパッケージ
+          sudo apt-get install -y \
+            texlive-latex-extra \
+            texlive-fonts-extra \
+            texlive-fonts-recommended \
+            texlive-science \
+            texlive-pictures \
+            fonts-noto-cjk
+          
+          # 美しいフォントの追加インストール
+          # Libertinus フォント（Linuxで代替としてLibertineを使用）
+          sudo apt-get install -y fonts-libertine
+          
+          # JetBrains Mono フォント
+          wget -O jetbrains-mono.zip https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
+          unzip jetbrains-mono.zip
+          sudo mkdir -p /usr/share/fonts/truetype/jetbrains-mono
+          sudo cp fonts/ttf/*.ttf /usr/share/fonts/truetype/jetbrains-mono/
+          sudo fc-cache -f -v
+          
+          # フォントキャッシュの更新
+          sudo fc-cache -fv
+          
       - name: Combine Markdown files
         run: |
           mkdir -p build
           ls chapters/*.md | sort | xargs cat > build/book.md
+          
       - name: Convert to PDF
         run: |
           pandoc build/book.md --defaults pandoc/latex.yaml -o build/book.pdf
+          
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: book-pdf
           path: build/book.pdf
+          
       - name: Create Release and attach PDF
         uses: softprops/action-gh-release@v1
         with:

@@ -1,5 +1,176 @@
 \usepackage{xeCJK}
-\setCJKmainfont{Noto Serif CJK JP}
-\setmainfont{Noto Serif CJK JP}
-\setsansfont{Noto Sans CJK JP}
-\setmonofont{Noto Sans Mono CJK JP}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{graphicx}
+
+% ページサイズとマージンの設定（A4、技術書らしい余白）
+\geometry{
+  a4paper,
+  left=2.5cm,
+  right=2cm,
+  top=2.5cm,
+  bottom=2.5cm,
+  headheight=15pt,
+  headsep=20pt,
+  footskip=30pt
+}
+
+% フォント設定（技術書らしいフォント）
+\setCJKmainfont[BoldFont={Noto Serif CJK JP Bold}]{Noto Serif CJK JP}
+\setmainfont[
+  Ligatures=TeX,
+  BoldFont={Libertinus Serif Bold},
+  ItalicFont={Libertinus Serif Italic}
+]{Libertinus Serif}
+\setsansfont[
+  Ligatures=TeX,
+  BoldFont={Libertinus Sans Bold}
+]{Libertinus Sans}
+\setmonofont[
+  Scale=0.9,
+  BoldFont={JetBrains Mono Bold}
+]{JetBrains Mono}
+
+% ヘッダー・フッターの設定
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\rightmark}
+\fancyhead[RE]{\leftmark}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% セクション見出しのスタイル
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{black}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{blue!80!black}}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{blue!60!black}}
+  {\thesubsection}{1em}{}
+
+% コードブロックの設定
+\tcbuselibrary{listings,skins,breakable}
+
+% シンタックスハイライト用の色定義
+\definecolor{codebg}{RGB}{248,248,248}
+\definecolor{codeframe}{RGB}{232,232,232}
+\definecolor{comment}{RGB}{106,153,85}
+\definecolor{keyword}{RGB}{86,156,214}
+\definecolor{string}{RGB}{206,145,120}
+\definecolor{number}{RGB}{181,206,168}
+
+% lstlisting環境の基本設定
+\lstset{
+  basicstyle=\small\ttfamily,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=flexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2,
+  frame=single,
+  backgroundcolor=\color{codebg},
+  rulecolor=\color{codeframe},
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{keyword}\bfseries,
+  commentstyle=\color{comment}\itshape,
+  stringstyle=\color{string},
+  numberstyle=\color{number},
+  xleftmargin=10pt,
+  xrightmargin=10pt,
+  framexleftmargin=8pt,
+  framexrightmargin=8pt,
+  captionpos=t,
+  aboveskip=15pt,
+  belowskip=15pt
+}
+
+% 各言語のシンタックスハイライト設定
+\lstdefinelanguage{JavaScript}{
+  keywords={abstract, arguments, boolean, break, byte, case, catch, char, class, const, continue, debugger, default, delete, do, double, else, enum, eval, export, extends, false, final, finally, float, for, function, goto, if, implements, import, in, instanceof, int, interface, let, long, native, new, null, package, private, protected, public, return, short, static, super, switch, synchronized, this, throw, throws, transient, true, try, typeof, var, void, volatile, while, with, yield},
+  keywordstyle=\color{keyword}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{blue!80!black}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{comment}\ttfamily,
+  stringstyle=\color{string}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstdefinelanguage{TypeScript}{
+  keywords={abstract, arguments, boolean, break, byte, case, catch, char, class, const, continue, debugger, default, delete, do, double, else, enum, eval, export, extends, false, final, finally, float, for, function, goto, if, implements, import, in, instanceof, int, interface, let, long, native, new, null, package, private, protected, public, return, short, static, super, switch, synchronized, this, throw, throws, transient, true, try, typeof, var, void, volatile, while, with, yield, type, as, readonly, keyof, infer, namespace, declare},
+  keywordstyle=\color{keyword}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this, type, interface, readonly},
+  ndkeywordstyle=\color{blue!80!black}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{comment}\ttfamily,
+  stringstyle=\color{string}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+% インラインコードの設定
+\newcommand{\passthrough}[1]{#1}
+
+% 表の設定
+\captionsetup[table]{
+  position=top,
+  skip=5pt,
+  font=small,
+  labelfont=bf
+}
+
+% 図の設定
+\captionsetup[figure]{
+  position=bottom,
+  skip=5pt,
+  font=small,
+  labelfont=bf
+}
+
+% リンクの色設定
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!80!black,
+  urlcolor=blue!80!black,
+  citecolor=blue!80!black,
+  filecolor=blue!80!black
+}
+
+% 長い単語の改行設定（英語の文字はみ出し対策）
+\emergencystretch=3em
+\tolerance=9999
+\hbadness=9999
+
+% マイクロタイポグラフィの有効化
+\microtypesetup{
+  protrusion=true,
+  expansion=true,
+  kerning=true,
+  spacing=true
+}
+
+% 日本語と英語の間のスペース調整
+\xeCJKsetup{CJKglue={\hskip 0pt plus 0.08\baselineskip}}
+
+% 章の開始ページを奇数ページに固定しない
+\let\cleardoublepage\clearpage

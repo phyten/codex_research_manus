@@ -1,10 +1,41 @@
 pdf-engine: xelatex
 include-in-header:
   - pandoc/header.tex
-metadata:
+# Luaフィルターの追加
+lua-filters:
+  - pandoc/codeblock-filter.lua
+variables:
+  documentclass: book
+  classoption:
+    - oneside
+    - 11pt
+  papersize: a4
+  # フォント設定
   CJKmainfont: "Noto Serif CJK JP"
-  mainfont: "Noto Serif CJK JP"
-  sansfont: "Noto Sans CJK JP"
-  monofont: "Noto Sans Mono CJK JP"
-toc: true
-toc-depth: 2
+  mainfont: "Libertinus Serif"
+  sansfont: "Libertinus Sans"
+  monofont: "JetBrains Mono"
+  # リンク設定
+  colorlinks: true
+  linkcolor: "blue!80!black"
+  urlcolor: "blue!80!black"
+  # 目次設定
+  toc: true
+  toc-depth: 3
+  # レイアウト設定
+  linestretch: 1.2
+  # ページ番号設定
+  numbersections: true
+  # コードブロック設定
+  highlight-style: tango
+  listings: true
+  # メタデータ
+  title: "Codex Research Manual"
+  subtitle: "技術書のためのリサーチマニュアル"
+  author: "Author Name"
+  date: "\\today"
+# コマンドラインオプション
+top-level-division: chapter
+number-sections: true
+# テンプレート変数
+template: null
