@@ -43,23 +43,24 @@ jobs:
             texlive-science \
             texlive-pictures \
             fonts-noto-cjk \
-            fonts-liberation \
-            fonts-libertinus
+            fonts-liberation
+          
+          # Libertinusフォントを手動でインストール（パッケージが利用できない場合）
+          wget -O libertinus.zip https://github.com/alerque/libertinus/releases/download/v7.040/Libertinus-7.040.zip
+          unzip libertinus.zip
+          sudo mkdir -p /usr/share/fonts/truetype/libertinus
+          sudo cp Libertinus-7.040/static/OTF/*.otf /usr/share/fonts/truetype/libertinus/ || true
+          sudo cp Libertinus-7.040/static/TTF/*.ttf /usr/share/fonts/truetype/libertinus/ || true
           
           # フォントのインストール確認
           echo "Available fonts:"
           fc-list | grep -i "liberation\|noto\|libertinus" | head -20
           
-          # 美しいフォントの追加インストール
-          # Libertinus フォント（Linuxではfonts-linuxlibertineが該当）
-          sudo apt-get install -y fonts-linuxlibertine
-          
-          # JetBrains Mono フォント
+          # JetBrains Monoフォントのインストール
           wget -O jetbrains-mono.zip https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
           unzip jetbrains-mono.zip
           sudo mkdir -p /usr/share/fonts/truetype/jetbrains-mono
-          sudo cp fonts/ttf/*.ttf /usr/share/fonts/truetype/jetbrains-mono/
-          sudo fc-cache -f -v
+          sudo cp fonts/ttf/*.ttf /usr/share/fonts/truetype/jetbrains-mono/ || true
           
           # フォントキャッシュの更新
           sudo fc-cache -fv
