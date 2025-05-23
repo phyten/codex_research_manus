@@ -42,7 +42,12 @@ jobs:
             texlive-fonts-recommended \
             texlive-science \
             texlive-pictures \
-            fonts-noto-cjk
+            fonts-noto-cjk \
+            fonts-liberation
+          
+          # フォントのインストール確認
+          echo "Available fonts:"
+          fc-list | grep -i "liberation\|noto" | head -10
           
           # 美しいフォントの追加インストール
           # Libertinus フォント（Linuxではfonts-linuxlibertineが該当）
@@ -68,17 +73,37 @@ jobs:
           # luaフィルターファイルの存在確認
           ls -la pandoc/codeblock-filter.lua
           
-          # まずluaフィルターなしでテスト
-          echo "Testing PDF generation without lua filter..."
-          pandoc build/book.md --defaults pandoc/latex.yaml -o build/book-test.pdf
+          # 使用するファイルの確認
+          echo "Input file size:"
+          wc -l build/book.md
+          echo "First 10 lines of input:"
+          head -10 build/book.md
           
-          # luaフィルター付きでPDF生成
-          echo "Generating PDF with lua filter..."
-          if [ -f "pandoc/codeblock-filter.lua" ]; then
-            pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf
+          # まずluaフィルターなしで詳細なログを出力してテスト
+          echo "Testing PDF generation without lua filter (verbose mode)..."
+          pandoc build/book.md --defaults pandoc/latex.yaml -o build/book-test.pdf --verbose || {
+            echo "PDF generation failed. Trying with minimal settings..."
+            pandoc build/book.md --pdf-engine=xelatex -o build/book-minimal.pdf --verbose
+          }
+          
+          # 成功した場合、luaフィルター付きでPDF生成
+          if [ -f "build/book-test.pdf" ]; then
+            echo "Basic PDF generation successful. Trying with lua filter..."
+            if [ -f "pandoc/codeblock-filter.lua" ]; then
+              pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf --verbose || {
+                echo "Lua filter failed, using basic PDF"
+                mv build/book-test.pdf build/book.pdf
+              }
+            else
+              echo "Lua filter not found, using basic PDF"
+              mv build/book-test.pdf build/book.pdf
+            fi
+          elif [ -f "build/book-minimal.pdf" ]; then
+            echo "Using minimal PDF as fallback"
+            mv build/book-minimal.pdf build/book.pdf
           else
-            echo "Lua filter not found, using test PDF as final output"
-            mv build/book-test.pdf build/book.pdf
+            echo "All PDF generation attempts failed"
+            exit 1
           fi
           
       - name: Upload artifact
