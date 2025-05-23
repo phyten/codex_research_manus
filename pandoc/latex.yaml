@@ -10,10 +10,10 @@ variables:
   papersize: a4
   # フォント設定（Ubuntu環境対応）
   # システムにフォントがない場合はコメントアウト
-  # CJKmainfont: "Noto Serif CJK JP"
-  # mainfont: "Liberation Serif"
-  # sansfont: "Liberation Sans"
-  # monofont: "Liberation Mono"
+  CJKmainfont: "Noto Serif CJK JP"
+  mainfont: "Liberation Serif"
+  sansfont: "Liberation Sans"
+  monofont: "Liberation Mono"
   # リンク設定
   colorlinks: true
   linkcolor: "blue!80!black"
