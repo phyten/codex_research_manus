@@ -1,9 +1,7 @@
 pdf-engine: xelatex
 include-in-header:
   - pandoc/header.tex
-# Luaフィルターの追加（複数形に修正）
-lua-filters:
-  - pandoc/codeblock-filter.lua
+# Luaフィルターはコマンドラインで指定
 variables:
   documentclass: book
   classoption:

@@ -24,11 +24,13 @@ jobs:
         run: |
           sudo apt-get update
           
-          # 最新のPandocをインストール
-          PANDOC_VERSION=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-          wget https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz
-          tar xzf pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz
-          sudo cp pandoc-${PANDOC_VERSION}/bin/pandoc /usr/local/bin/
+          # 最新のPandocをインストール（より確実な方法）
+          wget -qO- https://github.com/jgm/pandoc/releases/download/3.1.9/pandoc-3.1.9-linux-amd64.tar.gz | tar xzf - --strip-components 1 -C /tmp
+          sudo cp /tmp/bin/pandoc /usr/local/bin/
+          sudo cp /tmp/bin/pandoc-lua /usr/local/bin/ || true
+          
+          # Pandocのバージョンを確認
+          pandoc --version
           
           # 基本的なLaTeX環境
           sudo apt-get install -y texlive-xetex texlive-lang-japanese
@@ -63,7 +65,21 @@ jobs:
           
       - name: Convert to PDF
         run: |
-          pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf
+          # luaフィルターファイルの存在確認
+          ls -la pandoc/codeblock-filter.lua
+          
+          # まずluaフィルターなしでテスト
+          echo "Testing PDF generation without lua filter..."
+          pandoc build/book.md --defaults pandoc/latex.yaml -o build/book-test.pdf
+          
+          # luaフィルター付きでPDF生成
+          echo "Generating PDF with lua filter..."
+          if [ -f "pandoc/codeblock-filter.lua" ]; then
+            pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf
+          else
+            echo "Lua filter not found, using test PDF as final output"
+            mv build/book-test.pdf build/book.pdf
+          fi
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
