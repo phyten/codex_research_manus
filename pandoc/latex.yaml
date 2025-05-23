@@ -2,7 +2,7 @@ pdf-engine: xelatex
 include-in-header:
   - pandoc/header.tex
 # Luaフィルターの追加
-lua-filters:
+lua-filter:
   - pandoc/codeblock-filter.lua
 variables:
   documentclass: book
