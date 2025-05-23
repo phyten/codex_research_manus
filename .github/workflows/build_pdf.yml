@@ -41,7 +41,15 @@ jobs:
           
       - name: Test Japanese rendering
         run: |
-          echo "# 日本語テスト\n\n日本語が正しく表示されているかテストします。\n\n## セクション\n\n**太字**の日本語テキスト。" > test-japanese.md
+          cat > test-japanese.md << 'EOF'
+          # 日本語テスト
+          
+          日本語が正しく表示されているかテストします。
+          
+          ## セクション
+          
+          **太字**の日本語テキスト。
+          EOF
           docker run --rm -v ${{ github.workspace }}:/workspace texlive-pandoc \
             pandoc test-japanese.md --defaults pandoc/latex.yaml -o test-japanese.pdf --verbose
           
