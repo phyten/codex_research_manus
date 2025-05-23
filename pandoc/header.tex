@@ -1,19 +1,18 @@
-\usepackage{xeCJK}
+% LuaLaTeX + ltjsarticle用の設定
+\usepackage{luatexja}
+\usepackage[hiragino-pron]{luatexja-preset}
 \usepackage{geometry}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
-\usepackage{tcolorbox}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{fontspec}
-\usepackage{microtype}
 \usepackage[hidelinks]{hyperref}
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage{float}
 \usepackage{graphicx}
 
-% ページサイズとマージンの設定（A4、技術書らしい余白）
+% ページ設定
 \geometry{
   a4paper,
   left=2.5cm,
@@ -25,28 +24,6 @@
   footskip=30pt
 }
 
-% フォント設定（技術書らしいフォント、フォールバック対応）
-\setCJKmainfont[
-  BoldFont={Noto Sans CJK JP Bold},
-  FallBack={DejaVu Serif}
-]{Noto Sans CJK JP}
-\setmainfont[
-  Ligatures=TeX,
-  BoldFont={Liberation Serif Bold},
-  ItalicFont={Liberation Serif Italic},
-  FallBack={DejaVu Serif}
-]{Liberation Serif}
-\setsansfont[
-  Ligatures=TeX,
-  BoldFont={Liberation Sans Bold},
-  FallBack={DejaVu Sans}
-]{Liberation Sans}
-\setmonofont[
-  Scale=0.9,
-  BoldFont={Liberation Mono Bold},
-  FallBack={DejaVu Sans Mono}
-]{Liberation Mono}
-
 % ヘッダー・フッターの設定
 \pagestyle{fancy}
 \fancyhf{}
@@ -56,9 +33,6 @@
 \renewcommand{\headrulewidth}{0.4pt}
 
 % セクション見出しのスタイル
-\titleformat{\chapter}[display]
-  {\normalfont\Large\bfseries\color{black}}
-  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
 \titleformat{\section}
   {\normalfont\large\bfseries\color{blue!80!black}}
   {\thesection}{1em}{}
@@ -67,9 +41,6 @@
   {\thesubsection}{1em}{}
 
 % コードブロックの設定
-\tcbuselibrary{listings,skins,breakable}
-
-% シンタックスハイライト用の色定義
 \definecolor{codebg}{RGB}{248,248,248}
 \definecolor{codeframe}{RGB}{232,232,232}
 \definecolor{comment}{RGB}{106,153,85}
@@ -103,56 +74,6 @@
   belowskip=15pt
 }
 
-% 各言語のシンタックスハイライト設定
-\lstdefinelanguage{JavaScript}{
-  keywords={abstract, arguments, boolean, break, byte, case, catch, char, class, const, continue, debugger, default, delete, do, double, else, enum, eval, export, extends, false, final, finally, float, for, function, goto, if, implements, import, in, instanceof, int, interface, let, long, native, new, null, package, private, protected, public, return, short, static, super, switch, synchronized, this, throw, throws, transient, true, try, typeof, var, void, volatile, while, with, yield},
-  keywordstyle=\color{keyword}\bfseries,
-  ndkeywords={class, export, boolean, throw, implements, import, this},
-  ndkeywordstyle=\color{blue!80!black}\bfseries,
-  identifierstyle=\color{black},
-  sensitive=false,
-  comment=[l]{//},
-  morecomment=[s]{/*}{*/},
-  commentstyle=\color{comment}\ttfamily,
-  stringstyle=\color{string}\ttfamily,
-  morestring=[b]',
-  morestring=[b]"
-}
-
-\lstdefinelanguage{TypeScript}{
-  keywords={abstract, arguments, boolean, break, byte, case, catch, char, class, const, continue, debugger, default, delete, do, double, else, enum, eval, export, extends, false, final, finally, float, for, function, goto, if, implements, import, in, instanceof, int, interface, let, long, native, new, null, package, private, protected, public, return, short, static, super, switch, synchronized, this, throw, throws, transient, true, try, typeof, var, void, volatile, while, with, yield, type, as, readonly, keyof, infer, namespace, declare},
-  keywordstyle=\color{keyword}\bfseries,
-  ndkeywords={class, export, boolean, throw, implements, import, this, type, interface, readonly},
-  ndkeywordstyle=\color{blue!80!black}\bfseries,
-  identifierstyle=\color{black},
-  sensitive=false,
-  comment=[l]{//},
-  morecomment=[s]{/*}{*/},
-  commentstyle=\color{comment}\ttfamily,
-  stringstyle=\color{string}\ttfamily,
-  morestring=[b]',
-  morestring=[b]"
-}
-
-% インラインコードの設定
-\newcommand{\passthrough}[1]{#1}
-
-% 表の設定
-\captionsetup[table]{
-  position=top,
-  skip=5pt,
-  font=small,
-  labelfont=bf
-}
-
-% 図の設定
-\captionsetup[figure]{
-  position=bottom,
-  skip=5pt,
-  font=small,
-  labelfont=bf
-}
-
 % リンクの色設定
 \hypersetup{
   colorlinks=true,
@@ -161,22 +82,3 @@
   citecolor=blue!80!black,
   filecolor=blue!80!black
 }
-
-% 長い単語の改行設定（英語の文字はみ出し対策）
-\emergencystretch=3em
-\tolerance=9999
-\hbadness=9999
-
-% マイクロタイポグラフィの有効化
-\microtypesetup{
-  protrusion=true,
-  expansion=true,
-  kerning=true,
-  spacing=true
-}
-
-% 日本語と英語の間のスペース調整
-\xeCJKsetup{CJKglue={\hskip 0pt plus 0.08\baselineskip}}
-
-% 章の開始ページを奇数ページに固定しない
-\let\cleardoublepage\clearpage

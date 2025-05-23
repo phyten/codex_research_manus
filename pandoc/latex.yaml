@@ -1,19 +1,13 @@
-pdf-engine: xelatex
+pdf-engine: lualatex
 include-in-header:
   - pandoc/header.tex
 # Luaフィルターはコマンドラインで指定
 variables:
-  documentclass: book
+  documentclass: ltjsarticle
   classoption:
-    - oneside
-    - 11pt
-  papersize: a4
-  # フォント設定（Ubuntu環境対応）
-  # システムにフォントがない場合はコメントアウト
-  # CJKmainfont: "Noto Serif CJK JP"
-  # mainfont: "Liberation Serif"
-  # sansfont: "Liberation Sans"
-  # monofont: "Liberation Mono"
+    - 12pt
+    - a4paper
+  geometry: margin=1in
   # リンク設定
   colorlinks: true
   linkcolor: "blue!80!black"

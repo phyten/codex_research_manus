@@ -18,107 +18,35 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
-      - name: Install Pandoc and LaTeX
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Build Docker image
         run: |
-          sudo apt-get update
+          docker build -t texlive-pandoc .
           
-          # 最新のPandocをインストール（より確実な方法）
-          wget -qO- https://github.com/jgm/pandoc/releases/download/3.1.9/pandoc-3.1.9-linux-amd64.tar.gz | tar xzf - --strip-components 1 -C /tmp
-          sudo cp /tmp/bin/pandoc /usr/local/bin/
-          sudo cp /tmp/bin/pandoc-lua /usr/local/bin/ || true
-          
-          # Pandocのバージョンを確認
-          pandoc --version
-          
-          # 基本的なLaTeX環境
-          sudo apt-get install -y texlive-xetex texlive-lang-japanese
-          
-          # 技術書に必要な追加LaTeXパッケージ
-          sudo apt-get install -y \
-            texlive-latex-extra \
-            texlive-fonts-extra \
-            texlive-fonts-recommended \
-            texlive-science \
-            texlive-pictures \
-            fonts-noto-cjk \
-            fonts-liberation
-          
-          # Libertinusフォントを手動でインストール（パッケージが利用できない場合）
-          wget -O libertinus.zip https://github.com/alerque/libertinus/releases/download/v7.040/Libertinus-7.040.zip
-          unzip libertinus.zip
-          sudo mkdir -p /usr/share/fonts/truetype/libertinus
-          sudo cp Libertinus-7.040/static/OTF/*.otf /usr/share/fonts/truetype/libertinus/ || true
-          sudo cp Libertinus-7.040/static/TTF/*.ttf /usr/share/fonts/truetype/libertinus/ || true
-          
-          # フォントのインストール確認
-          echo "Available fonts (詳細):"
-          echo "=== Noto CJK fonts ==="
-          fc-list | grep -i "noto.*cjk" | head -10
-          echo "=== Libertinus fonts ==="
-          fc-list | grep -i "libertinus" | head -10
-          echo "=== JetBrains fonts ==="
-          fc-list | grep -i "jetbrains" | head -10
-          echo "=== Available serif fonts ==="
-          fc-list | grep -i "serif" | head -10
-          
-          # JetBrains Monoフォントのインストール
-          wget -O jetbrains-mono.zip https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
-          unzip jetbrains-mono.zip
-          sudo mkdir -p /usr/share/fonts/truetype/jetbrains-mono
-          sudo cp fonts/ttf/*.ttf /usr/share/fonts/truetype/jetbrains-mono/ || true
-          
-          # フォントキャッシュの更新
-          sudo fc-cache -fv
+      - name: Verify Docker environment
+        run: |
+          docker run --rm texlive-pandoc pandoc --version
+          docker run --rm texlive-pandoc lualatex --version
           
       - name: Combine Markdown files
         run: |
           mkdir -p build
           ls chapters/*.md | sort | xargs cat > build/book.md
           
+      - name: Test Japanese rendering
+        run: |
+          echo "# 日本語テスト\n\n日本語が正しく表示されているかテストします。\n\n## セクション\n\n**太字**の日本語テキスト。" > test-japanese.md
+          docker run --rm -v ${{ github.workspace }}:/workspace texlive-pandoc \
+            pandoc test-japanese.md --defaults pandoc/latex.yaml -o test-japanese.pdf --verbose
+          
       - name: Convert to PDF
         run: |
-          # luaフィルターファイルの存在確認
-          ls -la pandoc/codeblock-filter.lua
-          
-          # 使用するファイルの確認
-          echo "Input file size:"
-          wc -l build/book.md
-          echo "First 10 lines of input:"
-          head -10 build/book.md
-          
-          # 簡単な日本語テスト
-          echo "# 日本語テスト\n\n日本語が正しく表示されているかテストします。\n\n## セクション\n\n**太字**の日本語テキスト。" > test-japanese.md
-          echo "Testing basic Japanese rendering..."
-          pandoc test-japanese.md --pdf-engine=xelatex --include-in-header=pandoc/header.tex -o test-japanese.pdf --verbose || echo "Japanese test failed"
-          
-          # まずluaフィルターなしで詳細なログを出力してテスト
-          echo "Testing PDF generation without lua filter (verbose mode)..."
-          pandoc build/book.md --defaults pandoc/latex.yaml -o build/book-test.pdf --verbose || {
-            echo "PDF generation failed. Trying with minimal settings..."
-            pandoc build/book.md --pdf-engine=xelatex -o build/book-minimal.pdf --verbose
-          }
-          
-          # 成功した場合、luaフィルター付きでPDF生成
-          if [ -f "build/book-test.pdf" ]; then
-            echo "Basic PDF generation successful. Trying with lua filter..."
-            if [ -f "pandoc/codeblock-filter.lua" ]; then
-              pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf --verbose || {
-                echo "Lua filter failed, using basic PDF"
-                mv build/book-test.pdf build/book.pdf
-              }
-            else
-              echo "Lua filter not found, using basic PDF"
-              mv build/book-test.pdf build/book.pdf
-            fi
-          elif [ -f "build/book-minimal.pdf" ]; then
-            echo "Using minimal PDF as fallback"
-            mv build/book-minimal.pdf build/book.pdf
-          else
-            echo "All PDF generation attempts failed"
-            exit 1
-          fi
+          docker run --rm -v ${{ github.workspace }}:/workspace texlive-pandoc \
+            pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf --verbose
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -127,8 +55,6 @@ jobs:
           path: |
             build/book.pdf
             test-japanese.pdf
-            build/book-test.pdf
-            build/book-minimal.pdf
           
       - name: Create Release and attach PDF
         uses: softprops/action-gh-release@v1
