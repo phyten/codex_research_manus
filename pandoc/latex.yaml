@@ -1,0 +1,10 @@
+pdf-engine: xelatex
+include-in-header:
+  - pandoc/header.tex
+metadata:
+  CJKmainfont: "Noto Serif CJK JP"
+  mainfont: "Noto Serif CJK JP"
+  sansfont: "Noto Sans CJK JP"
+  monofont: "Noto Sans Mono CJK JP"
+toc: true
+toc-depth: 2
