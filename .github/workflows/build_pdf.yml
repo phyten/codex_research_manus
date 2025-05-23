@@ -43,11 +43,12 @@ jobs:
             texlive-science \
             texlive-pictures \
             fonts-noto-cjk \
-            fonts-liberation
+            fonts-liberation \
+            fonts-libertinus
           
           # フォントのインストール確認
           echo "Available fonts:"
-          fc-list | grep -i "liberation\|noto" | head -10
+          fc-list | grep -i "liberation\|noto\|libertinus" | head -20
           
           # 美しいフォントの追加インストール
           # Libertinus フォント（Linuxではfonts-linuxlibertineが該当）
