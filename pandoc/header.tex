@@ -7,7 +7,7 @@
 \usepackage{titlesec}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage[hidelinks]{hyperref}
+% hyperrefはpandocが自動で読み込むため削除
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage{float}
@@ -75,11 +75,13 @@
   belowskip=15pt
 }
 
-% リンクの色設定
-\hypersetup{
-  colorlinks=true,
-  linkcolor=blue!80!black,
-  urlcolor=blue!80!black,
-  citecolor=blue!80!black,
-  filecolor=blue!80!black
+% hyperrefの設定（パッケージ読み込み後に設定）
+\AtBeginDocument{
+  \hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    urlcolor=blue!80!black,
+    citecolor=blue!80!black,
+    filecolor=blue!80!black
+  }
 }
