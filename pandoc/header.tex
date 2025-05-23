@@ -25,21 +25,27 @@
   footskip=30pt
 }
 
-% フォント設定（技術書らしいフォント）
-\setCJKmainfont[BoldFont={Noto Serif CJK JP Bold}]{Noto Serif CJK JP}
+% フォント設定（技術書らしいフォント、フォールバック対応）
+\setCJKmainfont[
+  BoldFont={Noto Sans CJK JP Bold},
+  FallBack={DejaVu Serif}
+]{Noto Sans CJK JP}
 \setmainfont[
   Ligatures=TeX,
-  BoldFont={Libertinus Serif Bold},
-  ItalicFont={Libertinus Serif Italic}
-]{Libertinus Serif}
+  BoldFont={Liberation Serif Bold},
+  ItalicFont={Liberation Serif Italic},
+  FallBack={DejaVu Serif}
+]{Liberation Serif}
 \setsansfont[
   Ligatures=TeX,
-  BoldFont={Libertinus Sans Bold}
-]{Libertinus Sans}
+  BoldFont={Liberation Sans Bold},
+  FallBack={DejaVu Sans}
+]{Liberation Sans}
 \setmonofont[
   Scale=0.9,
-  BoldFont={JetBrains Mono Bold}
-]{JetBrains Mono}
+  BoldFont={Liberation Mono Bold},
+  FallBack={DejaVu Sans Mono}
+]{Liberation Mono}
 
 % ヘッダー・フッターの設定
 \pagestyle{fancy}
