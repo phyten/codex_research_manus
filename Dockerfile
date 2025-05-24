@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     && rm -rf /var/lib/apt/lists/*
 
+# 追加でtcolorbox関連のパッケージを確実にインストール
+RUN apt-get update && apt-get install -y \
+    texlive-latex-extra \
+    && rm -rf /var/lib/apt/lists/*
+
 # 日本語フォントのインストール
 RUN apt-get update && apt-get install -y \
     fonts-noto-cjk \

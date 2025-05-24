@@ -33,38 +33,30 @@ jobs:
           docker run --rm texlive-pandoc lualatex --version
           echo "Available Japanese fonts:"
           docker run --rm texlive-pandoc fc-list | grep -E "(Noto|Takao|VL|Gothic|Mincho)" | head -10
+          echo "tcolorbox package availability:"
+          docker run --rm texlive-pandoc kpsewhich tcolorbox.sty
           
       - name: Combine Markdown files
         run: |
           mkdir -p build
           ls chapters/*.md | sort | xargs cat > build/book.md
-          
-      - name: Test Japanese rendering
-        run: |
-          cat > test-japanese.md << 'EOF'
-          # 日本語テスト
-          
-          日本語が正しく表示されているかテストします。
-          
-          ## セクション
-          
-          **太字**の日本語テキスト。
-          EOF
-          docker run --rm -v ${{ github.workspace }}:/workspace texlive-pandoc \
-            pandoc test-japanese.md --defaults pandoc/latex.yaml -o test-japanese.pdf --verbose
+          echo "Combined file size: $(wc -l build/book.md) lines"
           
       - name: Convert to PDF
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace texlive-pandoc \
             pandoc build/book.md --defaults pandoc/latex.yaml --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf --verbose
           
+      - name: Verify PDF generation
+        run: |
+          ls -la build/book.pdf
+          echo "PDF generated successfully!"
+          
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: book-pdf
-          path: |
-            build/book.pdf
-            test-japanese.pdf
+          path: build/book.pdf
           
       - name: Create Release and attach PDF
         uses: softprops/action-gh-release@v1
