@@ -1,34 +1,44 @@
-FROM ubuntu:22.04
+# syntax=docker/dockerfile:1
+FROM ubuntu:22.04 AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 基本パッケージのインストール
-RUN apt-get update && apt-get install -y \
+# 基本パッケージのインストール（軽量、キャッシュ効率良）
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
     curl \
     wget \
     unzip \
     git \
-    fontconfig \
-    && rm -rf /var/lib/apt/lists/*
+    fontconfig
 
-# TeXLiveとPandocのインストール
-RUN apt-get update && apt-get install -y \
+# TeXLive段階（最も時間がかかる部分）
+FROM base AS texlive
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
     texlive-full \
-    pandoc \
-    && rm -rf /var/lib/apt/lists/*
+    pandoc
 
 # 追加でtcolorbox関連のパッケージを確実にインストール
-RUN apt-get update && apt-get install -y \
-    texlive-latex-extra \
-    && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
+    texlive-latex-extra
 
-# 日本語フォントのインストール
-RUN apt-get update && apt-get install -y \
+# 日本語フォント段階
+FROM texlive AS fonts
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
     fonts-noto-cjk \
     fonts-noto-cjk-extra \
     fonts-takao \
-    fonts-vlgothic \
-    && rm -rf /var/lib/apt/lists/*
+    fonts-vlgothic
+
+# 最終段階
+FROM fonts AS final
 
 # フォントキャッシュの更新
 RUN fc-cache -fv
