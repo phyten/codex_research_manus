@@ -48,8 +48,8 @@ jobs:
           
       - name: Combine Markdown files
         run: |
-          mkdir -p build
-          ls chapters/*.md | sort | xargs cat > build/book.md
+          chmod +x scripts/combine_chapters.sh
+          ./scripts/combine_chapters.sh
           echo "Combined file size: $(wc -l build/book.md) lines"
           
       - name: Convert to PDF
