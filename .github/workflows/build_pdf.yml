@@ -46,6 +46,11 @@ jobs:
           echo "tcolorbox package availability:"
           docker run --rm texlive-pandoc kpsewhich tcolorbox.sty
           
+      - name: Update commit date in PDF metadata
+        run: |
+          chmod +x scripts/update_commit_date.sh
+          ./scripts/update_commit_date.sh
+          
       - name: Combine Markdown files
         run: |
           chmod +x scripts/combine_chapters.sh
