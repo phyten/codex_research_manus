@@ -1,6 +1,6 @@
-# 6. Dockerを使ったリポジトリでのCodex活用
+# Dockerを使ったリポジトリでのCodex活用
 
-## 6.1 Dockerリポジトリの基本構成
+## Dockerリポジトリの基本構成
 
 Dockerを使用したプロジェクトでは、開発環境、テスト環境、本番環境の一貫性を確保するために、コンテナ化されたアプリケーションとその依存関係が定義されています。Codexを活用することで、Dockerを使ったリポジトリの管理と開発フローを効率化できます。
 
@@ -94,7 +94,7 @@ Codexを使用してDockerリポジトリを操作する際の初期設定手順
    docker-compose -f docker-compose.test.yml up --build --exit-code-from app
    ```
 
-## 6.2 Codexによるテスト自動化
+## Codexによるテスト自動化
 
 Dockerを使用したリポジトリでは、Codexを活用してテストの自動化を効率的に行うことができます。
 
@@ -447,7 +447,7 @@ docker-compose exec app npm test -- tests/services/userService.test.ts
 docker-compose exec app npm test -- --coverage
 ```
 
-## 6.3 CI/CDパイプラインとの連携
+## CI/CDパイプラインとの連携
 
 Dockerを使用したリポジトリでは、Codexを活用してCI/CDパイプラインとの連携を効率化することができます。
 
@@ -766,7 +766,7 @@ async deleteUser(id: string): Promise<boolean> {
 3. 非同期メソッドのエラーハンドリングを改善するために、try-catchブロックの使用を検討してください。
 ```
 
-## 6.4 マルチステージビルドの最適化
+## マルチステージビルドの最適化
 
 Dockerを使用したリポジトリでは、マルチステージビルドを活用して効率的なイメージを構築することが重要です。Codexを使用してマルチステージビルドを最適化する例を示します。
 

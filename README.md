@@ -70,19 +70,17 @@ JavaScript, TypeScript, Python, Ruby, Go, Rust, Java, C, C++, C#, PHP, SQL, HTML
 
 **必要なソフトウェア**: Docker のみ
 
-```bash
-# 1. Dockerイメージをビルド
+# Dockerイメージをビルド
 docker build -t texlive-pandoc .
 
-# 2. Markdownファイルを結合
+# Markdownファイルを結合
 mkdir -p build
 ls chapters/*.md | sort | xargs cat > build/book.md
 
-# 3. PDF生成
+# PDF生成
 docker run --rm -v "$(pwd):/workspace" texlive-pandoc \
   pandoc build/book.md --defaults pandoc/latex.yaml \
   --lua-filter pandoc/codeblock-filter.lua -o build/book.pdf
-```
 
 **メリット**: 
 - 環境構築が簡単
