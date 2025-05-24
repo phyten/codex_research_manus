@@ -26,7 +26,7 @@ variables:
   title: "Codex Research Manual"
   subtitle: "技術書のためのリサーチマニュアル"
   author: "phyten"
-  date: "Written with manus, Gemini Pro 2.5, ChatGPT o3, and Claude 4\\\\2025年05月24日"
+  date: "Written with manus, Gemini Pro 2.5, ChatGPT o3, and Claude 4\\newline2025年05月24日"
 # コマンドラインオプション
 top-level-division: chapter
 number-sections: true
