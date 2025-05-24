@@ -1,10 +1,10 @@
-# Dockerを使ったリポジトリでのCodex活用
+## Dockerを使ったリポジトリでのCodex活用
 
-## Dockerリポジトリの基本構成
+### Dockerリポジトリの基本構成
 
 Dockerを使用したプロジェクトでは、開発環境、テスト環境、本番環境の一貫性を確保するために、コンテナ化されたアプリケーションとその依存関係が定義されています。Codexを活用することで、Dockerを使ったリポジトリの管理と開発フローを効率化できます。
 
-### 典型的なDockerリポジトリの構造
+#### 典型的なDockerリポジトリの構造
 
 Dockerを使用したプロジェクトの典型的なディレクトリ構造は以下のようになります：
 
@@ -26,7 +26,7 @@ project-root/
 └── README.md             # プロジェクトの説明
 ```
 
-### AGENTS.mdファイルの設定
+#### AGENTS.mdファイルの設定
 
 Dockerを使用したプロジェクトでCodexを効果的に活用するためには、AGENTS.mdファイルに適切な設定を記述することが重要です。以下は、Dockerプロジェクト用のAGENTS.mdファイルの例です：
 
@@ -65,7 +65,7 @@ Dockerを使用したプロジェクトでCodexを効果的に活用するため
 - シークレット情報はDockerfileに含めないでください
 ```
 
-### Dockerリポジトリに対するCodexの初期設定
+#### Dockerリポジトリに対するCodexの初期設定
 
 Codexを使用してDockerリポジトリを操作する際の初期設定手順は以下の通りです：
 
@@ -94,11 +94,11 @@ Codexを使用してDockerリポジトリを操作する際の初期設定手順
    docker-compose -f docker-compose.test.yml up --build --exit-code-from app
    ```
 
-## Codexによるテスト自動化
+### Codexによるテスト自動化
 
 Dockerを使用したリポジトリでは、Codexを活用してテストの自動化を効率的に行うことができます。
 
-### コンテナ内でのテスト実行
+#### コンテナ内でのテスト実行
 
 Dockerコンテナ内でテストを実行するための設定例を示します：
 
@@ -148,7 +148,7 @@ COPY . .
 CMD ["npm", "test"]
 ```
 
-### Codexによるテストケース生成
+#### Codexによるテストケース生成
 
 Codexを使用して、Dockerコンテナ内で実行するテストケースを生成する例を示します：
 
@@ -447,11 +447,11 @@ docker-compose exec app npm test -- tests/services/userService.test.ts
 docker-compose exec app npm test -- --coverage
 ```
 
-## CI/CDパイプラインとの連携
+### CI/CDパイプラインとの連携
 
 Dockerを使用したリポジトリでは、Codexを活用してCI/CDパイプラインとの連携を効率化することができます。
 
-### GitHub Actionsとの統合
+#### GitHub Actionsとの統合
 
 GitHub Actionsを使用したCI/CDパイプラインの設定例を示します：
 
@@ -510,7 +510,7 @@ jobs:
         # 実際のデプロイコマンド
 ```
 
-### Codexによるワークフロー生成
+#### Codexによるワークフロー生成
 
 Codexを使用して、CI/CDワークフローファイルを生成する例を示します：
 
@@ -766,11 +766,11 @@ async deleteUser(id: string): Promise<boolean> {
 3. 非同期メソッドのエラーハンドリングを改善するために、try-catchブロックの使用を検討してください。
 ```
 
-## マルチステージビルドの最適化
+### マルチステージビルドの最適化
 
 Dockerを使用したリポジトリでは、マルチステージビルドを活用して効率的なイメージを構築することが重要です。Codexを使用してマルチステージビルドを最適化する例を示します。
 
-### 基本的なマルチステージビルド
+#### 基本的なマルチステージビルド
 
 Node.jsアプリケーションのマルチステージビルドの例を示します：
 
@@ -801,7 +801,7 @@ EXPOSE 3000
 CMD ["node", "dist/main.js"]
 ```
 
-### Codexによるマルチステージビルドの最適化
+#### Codexによるマルチステージビルドの最適化
 
 Codexを使用して、マルチステージビルドを最適化する例を示します：
 
@@ -902,7 +902,7 @@ EXPOSE $PORT
 CMD ["node", "dist/main.js"]
 ```
 
-### マルチステージビルドの利点
+#### マルチステージビルドの利点
 
 Codexを使用して最適化されたマルチステージビルドの利点は以下の通りです：
 

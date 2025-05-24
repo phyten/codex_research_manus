@@ -1,12 +1,12 @@
-# CI/CDとCodexの連携
+## CI/CDとCodexの連携
 
 継続的インテグレーション（CI）と継続的デリバリー/デプロイメント（CD）は、現代のソフトウェア開発において不可欠なプラクティスです。CodexをCI/CDパイプラインに統合することで、コードの品質向上、テストの自動化、デプロイメントの効率化をさらに推進できます。
 
-## GitHub Actionsとの統合
+### GitHub Actionsとの統合
 
 GitHub Actionsは、GitHubリポジトリ内で直接CI/CDワークフローを構築・実行できるプラットフォームです。Codex CLIはオープンソースであるため、GitHub Actionsのワークフローに容易に組み込むことができます。
 
-### Codex CLIをワークフローで使用する
+#### 基本的なワークフロー設定
 
 GitHub Actionsワークフロー内でCodex CLIを使用する基本的な手順は以下の通りです：
 
@@ -86,11 +86,11 @@ jobs:
 
 このワークフローは、プルリクエストで変更されたファイルに対してCodexによるコードレビューを実行し、その結果をプルリクエストのコメントとして投稿します。
 
-## 自動テストとコード品質チェック
+#### Codexを活用したワークフロー生成
 
 Codexは、CI/CDパイプラインにおける自動テストとコード品質チェックの強化にも役立ちます。
 
-### テストカバレッジの向上
+#### テストの自動実行
 
 テストカバレッジが低い箇所を特定し、Codexに不足しているテストケースの生成を依頼することができます。
 
@@ -175,7 +175,7 @@ jobs:
 
 このワークフローは、定期的にテストカバレッジをチェックし、カバレッジが低いファイルに対してCodexにテストケースの生成を依頼し、その結果をプルリクエストとして作成します。
 
-### コード品質チェックと自動修正
+#### コード品質の検証
 
 Codexを使用して、リンターや静的解析ツールの警告を自動的に修正することも可能です。
 
@@ -271,11 +271,13 @@ jobs:
 - Codexによる自動修正は、意図しない変更を引き起こす可能性があるため、慎重に導入し、修正結果を必ずレビューする必要があります。
 - 大規模な修正や複雑なリファクタリングは、Codexに任せるよりも人間が介入する方が安全な場合があります。
 
-## デプロイメントの自動化
+### デプロイメントの自動化
+
+#### ステージング環境への自動デプロイ
 
 Codexは、デプロイメントスクリプトの生成や、デプロイメントプロセスのトラブルシューティングにも活用できます。
 
-### デプロイメントスクリプトの生成
+#### 本番環境への安全なデプロイ
 
 特定のクラウドプロバイダーやオーケストレーションツール向けのデプロイメントスクリプトをCodexに生成させることができます。
 
@@ -289,102 +291,20 @@ AWS CDK (TypeScript) を使用して、以下のリソースをデプロイす�
 
 Codexは、指定された要件に基づいたAWS CDKのコードを生成します。
 
-### デプロイメントエラーのトラブルシューティング
+### 実践的なワークフロー設計
 
-CI/CDパイプラインのデプロイメントステップでエラーが発生した場合、エラーログをCodexに提供し、原因分析と解決策の提案を依頼することができます。
-
-```
-以下のKubernetesデプロイメントエラーログを分析し、原因と解決策を教えてください。
-
-Error: ImagePullBackOff
-Events:
-  Type     Reason     Age                From               Message
-  ----     ------     ----               ----               -------
-  Normal   Scheduled  5m                 default-scheduler  Successfully assigned default/my-app-deployment-xxxx-yyyy to node-1
-  Normal   Pulling    4m                 kubelet, node-1    Pulling image "my-registry/my-app:latest"
-  Warning  Failed     3m                 kubelet, node-1    Failed to pull image "my-registry/my-app:latest": rpc error: code = Unknown desc = Error response from daemon: pull access denied for my-registry/my-app, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
-  Warning  Failed     3m                 kubelet, node-1    Error: ErrImagePull
-  Normal   BackOff    2m (x2 over 3m)    kubelet, node-1    Back-off pulling image "my-registry/my-app:latest"
-  Warning  Failed     1m (x2 over 3m)    kubelet, node-1    Error: ImagePullBackOff
-```
-
-Codexは以下のような分析結果を提供します：
-
-```
-# Kubernetesデプロイメントエラー分析
-
-## エラー概要
-
-`ImagePullBackOff` エラーが発生しており、Kubernetesクラスターが指定されたDockerイメージ `my-registry/my-app:latest` をプルできていません。
-
-## 主な原因
-
-イベントログの以下のメッセージが原因を示唆しています：
-```
-Failed to pull image "my-registry/my-app:latest": rpc error: code = Unknown desc = Error response from daemon: pull access denied for my-registry/my-app, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
-```
-これは、以下のいずれかの理由でイメージのプルに失敗したことを意味します：
-1. **認証エラー**: Kubernetesクラスターが `my-registry` にアクセスするための認証情報を持っていないか、認証情報が正しくない。
-2. **リポジトリ/イメージが存在しない**: 指定されたリポジトリ `my-registry/my-app` またはタグ `latest` が存在しない。
-3. **権限不足**: 認証は成功したが、指定されたリポジトリへのアクセス権限がない。
-
-## 解決策
-
-以下の点を確認・修正してください：
-
-1. **イメージ名の確認**: デプロイメントマニフェスト（Deployment YAML）で指定されているイメージ名 (`my-registry/my-app:latest`) が正しいか確認してください。タイポがないか、リポジトリ名、イメージ名、タグが正確かを確認します。
-
-2. **リポジトリの存在確認**: Dockerレジストリ (`my-registry`) に `my-app` というリポジトリと `latest` というタグが存在するか確認してください。
-
-3. **認証情報の設定 (ImagePullSecrets)**: プライベートレジストリを使用している場合、Kubernetesクラスターがレジストリにアクセスするための認証情報が必要です。
-   - `docker login` コマンドで使用する認証情報から Kubernetes Secret (`type: kubernetes.io/dockerconfigjson`) を作成します。
-   - 作成したSecretを、DeploymentのPodテンプレート内の `spec.imagePullSecrets` フィールドで参照します。
-
-   ```yaml
-   # deployment.yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: my-app-deployment
-   spec:
-     template:
-       spec:
-         containers:
-         - name: my-app
-           image: my-registry/my-app:latest
-         imagePullSecrets:
-         - name: my-registry-secret # 作成したSecretの名前
-   ```
-
-4. **サービスアカウントへの紐付け**: Namespace内のデフォルトのサービスアカウントに `imagePullSecrets` を紐付けることもできます。これにより、そのNamespace内のすべてのPodが自動的にSecretを使用できるようになります。
-
-5. **IAM/権限設定**: クラウドプロバイダーのコンテナレジストリ（例: AWS ECR, GCP GCR, Azure ACR）を使用している場合、Kubernetesノード（またはノードグループのIAMロール）にレジストリからイメージをプルする権限が付与されているか確認してください。
-
-これらの手順を確認・実行することで、`ImagePullBackOff` エラーが解決するはずです。
-```
-
-## 実践的なワークフロー設計
-
-CodexをCI/CDパイプラインに効果的に組み込むための実践的なワークフロー設計のポイントをいくつか紹介します。
-
-### プルリクエスト中心のワークフロー
+#### マルチブランチ対応ワークフロー
 
 - **自動レビュー**: プルリクエスト作成時にCodexによる自動コードレビューを実行し、基本的な問題を早期に検出します。
 - **テスト実行**: 変更されたコードに関連するテストを自動実行します。
 - **プレビュー環境**: 必要に応じて、プルリクエストごとに一時的なプレビュー環境をデプロイし、動作確認を行います。
 
-### mainブランチへのマージ後のワークフロー
+#### モノレポ対応ワークフロー
 
 - **統合テスト**: アプリケーション全体の統合テストを実行します。
 - **ビルドとプッシュ**: Dockerイメージをビルドし、コンテナレジストリにプッシュします。
 - **ステージング環境へのデプロイ**: 自動的にステージング環境へデプロイし、最終確認を行います。
 - **本番環境へのデプロイ**: 手動承認または自動で本番環境へデプロイします。
-
-### 定期的なメンテナンスワークフロー
-
-- **依存関係の更新チェック**: 定期的に依存関係の脆弱性スキャンや更新チェックを行い、Codexに更新作業のプルリクエスト作成を依頼します。
-- **テストカバレッジ向上**: 定期的にテストカバレッジを分析し、Codexに不足テストの生成を依頼します。
-- **コードのリファクタリング提案**: 定期的にコードベース全体を分析し、Codexにリファクタリングや最適化の提案を依頼します。
 
 ### Codex利用の注意点
 
